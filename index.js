@@ -30,12 +30,11 @@ export class QNFileAdapter {
   }
 
   /**
-   * @param  {object} config
    * @param  {string} filename
    * @param  {string} data
    * @return {Promise} Promise
    */
-  createFile(config, filename, data, contentType) {
+  createFile( filename, data, contentType) {
     let upToken = new qiniu.rs.PutPolicy(this._bucket + ":" + filename).token();
 
     return new Promise((resolve, reject) => {
@@ -51,11 +50,10 @@ export class QNFileAdapter {
   }
 
   /**
-   * @param  {object} config
    * @param  {string} filename
    * @return {Promise} Promise
    */
-  deleteFile(config, filename) {
+  deleteFile( filename) {
     return new Promise((resolve, reject) => {
       this._client.remove(this._bucket, filename, (err, ret) => {
         if (!err) {
@@ -68,11 +66,10 @@ export class QNFileAdapter {
   }
 
   /**
-   * @param  {object} config
    * @param  {string} filename
    * @return {Promise} Promise
    */
-  getFileData(config, filename) {
+  getFileData( filename) {
     return new Promise((resolve, reject) => {
       let baseUrl = qiniu.rs.makeBaseUrl(this._bucketDomain, filename);
       let policy = qiniu.rs.GetPolicy();
