@@ -3,12 +3,12 @@
 ## Useage
 
 ```
-npm install parse-server-qnfileadapter
+npm install https://github.com/manymingge/parse-server-QNFileAdapter.git
 ```
 
 ```
 var ParseServer   = require('parse-server').ParseServer;
-var QNFileAdapter = require('parse-server-qiniufileadapter');
+var QNFileAdapter = require('parse-server-QNFileAdapter').QNFileAdapter;
 
 var accessKey = 'YOUR_QINIU_ACCESS_KEY';
 var secretKey = 'YOUR_QINIU_SECRET_KET';
@@ -23,7 +23,7 @@ var api = new ParseServer({
   masterKey: process.env.MASTER_KEY || '', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337'
   (...)
-  filesAdapter: new AzureStorageAdapter(accessKey, secretKey, options);
+  filesAdapter: new QNFileAdapter(accessKey, secretKey, options);
 });
 ```
 
