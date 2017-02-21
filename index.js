@@ -1,41 +1,24 @@
+'use strict';
 /**
  * Created by mercury on 16/3/20.
  */
-import * as qiniu from 'qiniu';
-import http from 'http';
+var qiniu = require('qiniu');
+var http = require('http');
 
-export class QNFileAdapter {
 
-  /**
-   *
-   * @param accessKey
-   * @param secretKey
-   * @param bucket
-   * @param bucketDomain
-   * @param directAccess default false
-   */
-  constructor(accessKey,
-              secretKey,
-    {bucket,
-      bucketDomain,
-      directAccess = false} = {}) {
-    this._bucket = bucket;
-    this._bucketDomain = bucketDomain;
-    this._directAccess = directAccess;
+function QNFileAdapter() {
+  this._bucket = arguments[2].bucket;
+  this._bucketDomain = arguments[2].bucketDomain;
+  this._directAccess = arguments[2].directAccess||false;
 
-    qiniu.conf.ACCESS_KEY = accessKey;
-    qiniu.conf.SECRET_KEY = secretKey;
+  qiniu.conf.ACCESS_KEY = arguments[0];
+  qiniu.conf.SECRET_KEY = arguments[1];
+  this._client = new qiniu.rs.Client();
+}
 
-    this._client = new qiniu.rs.Client();
-  }
 
-  /**
-   * @param  {string} filename
-   * @param  {string} data
-   * @return {Promise} Promise
-   */
-  createFile( filename, data, contentType) {
-    let upToken = new qiniu.rs.PutPolicy(this._bucket + ":" + filename).token();
+QNFileAdapter.prototype.createFile = function(filename, data, contentType) {
+  let upToken = new qiniu.rs.PutPolicy(this._bucket + ":" + filename).token();
 
     return new Promise((resolve, reject) => {
       let extra = new qiniu.io.PutExtra();
@@ -47,14 +30,10 @@ export class QNFileAdapter {
         }
       })
     });
-  }
+}
 
-  /**
-   * @param  {string} filename
-   * @return {Promise} Promise
-   */
-  deleteFile( filename) {
-    return new Promise((resolve, reject) => {
+QNFileAdapter.prototype.deleteFile = function(filename) {
+  return new Promise((resolve, reject) => {
       this._client.remove(this._bucket, filename, (err, ret) => {
         if (!err) {
           resolve(ret);
@@ -63,14 +42,9 @@ export class QNFileAdapter {
         }
       })
     });
-  }
-
-  /**
-   * @param  {string} filename
-   * @return {Promise} Promise
-   */
-  getFileData( filename) {
-    return new Promise((resolve, reject) => {
+}
+QNFileAdapter.prototype.getFileData = function(filename) {
+  return new Promise((resolve, reject) => {
       let baseUrl = qiniu.rs.makeBaseUrl(this._bucketDomain, filename);
       let policy = qiniu.rs.GetPolicy();
       let downloadUrl = policy.makeRequest(baseUrl);
@@ -91,18 +65,13 @@ export class QNFileAdapter {
 
       }).on('error', (err) => reject(err));
     });
-  }
+}
 
-
-  /**
-   * @param  {object} config
-   * @param  {string} filename
-   * @return {string} file's url
-   */
-  getFileLocation(config, filename) {
-    if (this._directAccess) {
+QNFileAdapter.prototype.getFileLocation = function(config, filename) {
+  if (this._directAccess) {
       return `${this._bucketDomain}/${filename}`;
     }
     return (`${config.mount}/files/${config.applicationId}/${encodeURIComponent(filename)}`);
-  }
 }
+module.exports = QNFileAdapter;
+module.exports.default = QNFileAdapter;
