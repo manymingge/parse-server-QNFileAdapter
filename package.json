@@ -8,7 +8,7 @@
     "url": "https://github.com/wsk3201/parse-server-QNFileAdapter"
   },
   "dependencies": {
-    "qiniu": "^6.1.9",
+    "qiniu": "^7.0.9",
     "babel-polyfill": "^6.5.0",
     "babel-runtime": "^6.5.0"
   },
